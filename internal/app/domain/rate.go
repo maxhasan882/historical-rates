@@ -28,7 +28,7 @@ type Rate struct {
 	Id       int        `json:"id"`
 	Date     *time.Time `json:"date"`
 	Currency string     `json:"currency"`
-	Rate     float32    `json:"rate"`
+	Rate     float64    `json:"rate"`
 }
 
 type AnalyzeReport struct {

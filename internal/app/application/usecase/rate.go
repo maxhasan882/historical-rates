@@ -9,24 +9,24 @@ type RateUseCase struct {
 	RateRepository repository.IHistoricalRate
 }
 
-func (r RateUseCase) GetLatestHistoricalRate() (map[string]float32, error) {
+func (r RateUseCase) GetLatestHistoricalRate() (map[string]float64, error) {
 	rates, err := r.RateRepository.GetLatest()
 	if err != nil {
 		return nil, err
 	}
-	result := make(map[string]float32)
+	result := make(map[string]float64)
 	for _, value := range rates {
 		result[value.Currency] = value.Rate
 	}
 	return result, nil
 }
 
-func (r RateUseCase) GetHistoricalRateByDate(date string) (map[string]float32, error) {
+func (r RateUseCase) GetHistoricalRateByDate(date string) (map[string]float64, error) {
 	rates, err := r.RateRepository.GetByDate(date)
 	if err != nil {
 		return nil, err
 	}
-	result := make(map[string]float32)
+	result := make(map[string]float64)
 	for _, value := range rates {
 		result[value.Currency] = value.Rate
 	}

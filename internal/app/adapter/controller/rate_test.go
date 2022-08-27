@@ -5,10 +5,12 @@ import (
 	"github.com/golang/mock/gomock"
 	"github.com/historical-rate/internal/app/adapter"
 	"github.com/historical-rate/internal/app/application/usecase"
+	"github.com/historical-rate/internal/app/domain"
 	"github.com/stretchr/testify/assert"
 	"net/http"
 	"net/http/httptest"
 	"testing"
+	"time"
 )
 
 func TestLatestHistoricalRate(t *testing.T) {
@@ -16,14 +18,31 @@ func TestLatestHistoricalRate(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 	m := usecase.NewMockIHistoricalRate(ctrl)
-	m.EXPECT().GetLatest().Return(nil, nil)
+	timeNow := time.Now()
+	var rates []domain.Rate
+	rates = append(rates, domain.Rate{
+		Id:       1,
+		Date:     &timeNow,
+		Currency: "BDT",
+		Rate:     100,
+	})
+
+	expectedResult := make(map[string]interface{})
+	for _, value := range rates {
+		expectedResult[value.Currency] = value.Rate
+	}
+	actualResult := make(map[string]interface{})
+	actualResult["base"] = "EUR"
+	actualResult["rates"] = expectedResult
+
+	m.EXPECT().GetLatest().Return(rates, nil)
 
 	server := Server{
 		DB:             nil,
 		RateRepository: m,
 	}
 	server.RateRepository = m
-	var response interface{}
+	var response map[string]interface{}
 
 	req := httptest.NewRequest(http.MethodGet, "/rates/latest", nil)
 	res := httptest.NewRecorder()
@@ -37,7 +56,7 @@ func TestLatestHistoricalRate(t *testing.T) {
 	if want, got := http.StatusOK, res.Result().StatusCode; want != got {
 		t.Fatalf("expected a %d, instead got: %d", want, got)
 	}
-
+	assert.Equal(t, response, actualResult)
 	assert.Equal(t, res.Code, 200)
 }
 

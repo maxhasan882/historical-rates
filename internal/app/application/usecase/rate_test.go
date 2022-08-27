@@ -22,7 +22,7 @@ func TestMockIHistoricalRate_GetLatestHistoricalRate(t *testing.T) {
 		Currency: "BDT",
 		Rate:     100,
 	})
-	expectedResult := make(map[string]float32)
+	expectedResult := make(map[string]float64)
 	for _, value := range rates {
 		expectedResult[value.Currency] = value.Rate
 	}
@@ -46,7 +46,7 @@ func TestRateUseCase_GetHistoricalRateByDate(t *testing.T) {
 		Rate:     100,
 	})
 
-	result := make(map[string]float32)
+	result := make(map[string]float64)
 	for _, value := range rates {
 		result[value.Currency] = value.Rate
 	}
