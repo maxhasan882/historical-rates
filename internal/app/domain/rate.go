@@ -30,3 +30,17 @@ type Rate struct {
 	Currency string     `json:"currency"`
 	Rate     float32    `json:"rate"`
 }
+
+type AnalyzeReport struct {
+	Currency string  `json:"currency"`
+	Min      float32 `json:"min"`
+	Max      float32 `json:"max"`
+	Avg      float32 `json:"avg"`
+}
+
+type AnalyzeReportResponse struct {
+	Currency string  `json:"currency,omitempty"`
+	Min      float32 `json:"min"`
+	Max      float32 `json:"max"`
+	Avg      float32 `json:"avg"`
+}
