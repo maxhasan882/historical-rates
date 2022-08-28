@@ -3,6 +3,7 @@ package usecase
 import (
 	"github.com/golang/mock/gomock"
 	"github.com/historical-rate/internal/app/domain"
+	"github.com/historical-rate/internal/app/domain/repository"
 	"github.com/stretchr/testify/assert"
 	"testing"
 	"time"
@@ -13,7 +14,7 @@ func TestMockIHistoricalRate_GetLatestHistoricalRate(t *testing.T) {
 
 	defer ctrl.Finish()
 
-	m := NewMockIHistoricalRate(ctrl)
+	m := repository.NewMockIHistoricalRate(ctrl)
 	timeNow := time.Now()
 	var rates []domain.Rate
 	rates = append(rates, domain.Rate{
@@ -35,7 +36,7 @@ func TestMockIHistoricalRate_GetLatestHistoricalRate(t *testing.T) {
 func TestRateUseCase_GetHistoricalRateByDate(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
-	m := NewMockIHistoricalRate(ctrl)
+	m := repository.NewMockIHistoricalRate(ctrl)
 	timeNow := time.Now()
 	timeString := timeNow.Format("2006-01-03")
 	var rates []domain.Rate
@@ -59,7 +60,7 @@ func TestRateUseCase_GetHistoricalRateByDate(t *testing.T) {
 func TestMockIHistoricalRate_GetAnalyze(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
-	m := NewMockIHistoricalRate(ctrl)
+	m := repository.NewMockIHistoricalRate(ctrl)
 	var analyzes []domain.AnalyzeReport
 	analyzes = append(analyzes, domain.AnalyzeReport{
 		Currency: "BDT",

@@ -4,8 +4,8 @@ import (
 	"encoding/json"
 	"github.com/golang/mock/gomock"
 	"github.com/historical-rate/internal/app/adapter"
-	"github.com/historical-rate/internal/app/application/usecase"
 	"github.com/historical-rate/internal/app/domain"
+	"github.com/historical-rate/internal/app/domain/repository"
 	"github.com/stretchr/testify/assert"
 	"net/http"
 	"net/http/httptest"
@@ -17,7 +17,7 @@ func TestLatestHistoricalRate(t *testing.T) {
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
-	m := usecase.NewMockIHistoricalRate(ctrl)
+	m := repository.NewMockIHistoricalRate(ctrl)
 	timeNow := time.Now()
 	var rates []domain.Rate
 	rates = append(rates, domain.Rate{
@@ -49,7 +49,9 @@ func TestLatestHistoricalRate(t *testing.T) {
 
 	server.GetLatestHistoricalRate(res, req, nil)
 	err := json.Unmarshal([]byte(res.Body.String()), &response)
-
+	if err != nil {
+		return
+	}
 	if err != nil {
 		t.Error("Parse JSON Data Error")
 	}
@@ -64,7 +66,7 @@ func TestHistoricalRateByDate(t *testing.T) {
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
-	m := usecase.NewMockIHistoricalRate(ctrl)
+	m := repository.NewMockIHistoricalRate(ctrl)
 	date := "2022-01-01"
 	m.EXPECT().GetByDate(date).Return(nil, nil)
 
@@ -95,7 +97,7 @@ func TestHistoricalAnalyzeReport(t *testing.T) {
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
-	m := usecase.NewMockIHistoricalRate(ctrl)
+	m := repository.NewMockIHistoricalRate(ctrl)
 	m.EXPECT().GetAnalyze().Return(nil, nil)
 
 	server := Server{
