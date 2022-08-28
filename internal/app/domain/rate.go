@@ -9,7 +9,7 @@ type Cube struct {
 	Time string `xml:"time,attr"`
 	Cube []struct {
 		Currency string  `xml:"currency,attr"`
-		Rate     float32 `xml:"rate,attr"`
+		Rate     float64 `xml:"rate,attr"`
 	} `xml:"Cube"`
 }
 
