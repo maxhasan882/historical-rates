@@ -1,12 +1,20 @@
 package main
 
 import (
+	"github.com/historical-rate/cmd/env"
 	"github.com/historical-rate/internal/app/adapter"
 	"github.com/historical-rate/internal/app/adapter/controller"
 	"log"
 	"net/http"
 	"os"
 )
+
+func init() {
+	err := env.Load(".env")
+	if err != nil {
+		log.Println(err)
+	}
+}
 
 func main() {
 	router := adapter.New()

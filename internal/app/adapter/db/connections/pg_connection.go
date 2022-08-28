@@ -8,7 +8,10 @@ import (
 )
 
 func Connect() *sql.DB {
-	psqlInfo := fmt.Sprintf("postgres://%s:%s@%s:%s/%s?sslmode=disable&TimeZone=Asia/Shanghai", os.Getenv("USER"), os.Getenv("PASSWORD"), os.Getenv("HOST"), os.Getenv("PORT"), os.Getenv("DATABASE_NAME"))
+	psqlInfo := fmt.Sprintf(`postgres://%s:%s@%s:%s/%s?sslmode=disable&TimeZone=Asia/Shanghai`,
+		os.Getenv("POSTGRES_USER"), os.Getenv("POSTGRES_PASSWORD"),
+		os.Getenv("POSTGRES_HOST"), os.Getenv("POSTGRES_PORT"),
+		os.Getenv("DATABASE_NAME"))
 	result, err := sql.Open("postgres", psqlInfo)
 	if err != nil {
 		panic(err)
