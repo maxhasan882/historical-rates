@@ -8,11 +8,12 @@ import (
 )
 
 type Server struct {
-	DB             *sql.DB
-	RateRepository repository.IHistoricalRate
+	DB               *sql.DB
+	RateRepository   repository.IHistoricalRate
+	LoaderRepository repository.IDataLoader
 }
 
 func GetServer() *Server {
 	db := connections.Connect()
-	return &Server{DB: db, RateRepository: repo.NewHistoricalRate(db)}
+	return &Server{DB: db, RateRepository: repo.NewHistoricalRate(db), LoaderRepository: repo.NewDataLoader(db)}
 }

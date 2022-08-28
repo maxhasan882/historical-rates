@@ -7,6 +7,8 @@ import (
 	"github.com/historical-rate/internal/app/domain/repository"
 )
 
+const DateTimeLayout = "2006-01-02"
+
 type HistoricalRate struct {
 	DB *sql.DB
 }
