@@ -5,7 +5,7 @@ import (
 	"github.com/golang/mock/gomock"
 	"github.com/historical-rate/internal/app/adapter"
 	"github.com/historical-rate/internal/app/domain"
-	"github.com/historical-rate/internal/app/domain/repository"
+	"github.com/historical-rate/internal/app/domain/repository/mocks"
 	"github.com/stretchr/testify/assert"
 	"net/http"
 	"net/http/httptest"
@@ -17,7 +17,7 @@ func TestLatestHistoricalRate(t *testing.T) {
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
-	m := repository.NewMockIHistoricalRate(ctrl)
+	m := mocks.NewMockIHistoricalRate(ctrl)
 	timeNow := time.Now()
 	var rates []domain.Rate
 	rates = append(rates, domain.Rate{
@@ -66,7 +66,7 @@ func TestHistoricalRateByDate(t *testing.T) {
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
-	m := repository.NewMockIHistoricalRate(ctrl)
+	m := mocks.NewMockIHistoricalRate(ctrl)
 	date := "2022-01-01"
 	m.EXPECT().GetByDate(date).Return(nil, nil)
 
@@ -97,7 +97,7 @@ func TestHistoricalAnalyzeReport(t *testing.T) {
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
-	m := repository.NewMockIHistoricalRate(ctrl)
+	m := mocks.NewMockIHistoricalRate(ctrl)
 	m.EXPECT().GetAnalyze().Return(nil, nil)
 
 	server := Server{

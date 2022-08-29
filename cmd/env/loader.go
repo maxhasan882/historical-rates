@@ -2,10 +2,25 @@ package env
 
 import (
 	"bufio"
-	"log"
+	"io"
 	"os"
 	"strings"
 )
+
+type ILoader interface {
+	LoadFile(fileName string) (io.Reader, error)
+}
+
+type Loader struct {
+}
+
+func NewLoader() ILoader {
+	return &Loader{}
+}
+
+type LoadFile struct {
+	LoadRepo ILoader
+}
 
 func fileNameOrDefault(fileName string) string {
 	if len(fileName) > 0 {
@@ -14,18 +29,8 @@ func fileNameOrDefault(fileName string) string {
 	return ".env"
 }
 
-func getEnvMap(fileName string) (map[string]string, error) {
+func getEnvMap(file io.Reader) (map[string]string, error) {
 	envMap := make(map[string]string)
-	file, err := os.Open(fileName)
-	if err != nil {
-		return nil, err
-	}
-	defer func(file *os.File) {
-		err := file.Close()
-		if err != nil {
-			log.Println(err)
-		}
-	}(file)
 	scanner := bufio.NewScanner(file)
 	for scanner.Scan() {
 		line := scanner.Text()
@@ -35,17 +40,31 @@ func getEnvMap(fileName string) (map[string]string, error) {
 	return envMap, nil
 }
 
-func Load(fileName string) error {
-	fileName = fileNameOrDefault(fileName)
-	envMap, err := getEnvMap(fileName)
-	if err != nil {
-		return err
-	}
+func setToEnv(envMap map[string]string) error {
 	for key, value := range envMap {
-		err = os.Setenv(key, value)
+		err := os.Setenv(key, value)
 		if err != nil {
 			return err
 		}
 	}
 	return nil
+}
+
+func (l *Loader) LoadFile(fileName string) (io.Reader, error) {
+	return os.Open(fileName)
+}
+
+func (l LoadFile) Load(fileName string) error {
+	var envMap map[string]string
+	fileName = fileNameOrDefault(fileName)
+	file, err := l.LoadRepo.LoadFile(fileName)
+	if err != nil {
+		return err
+	}
+	envMap, err = getEnvMap(file)
+	if err != nil {
+		return err
+	}
+	err = setToEnv(envMap)
+	return err
 }
