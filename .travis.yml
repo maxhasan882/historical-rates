@@ -1,0 +1,7 @@
+language: go
+go:
+  - setup-travis_ci
+  - master
+
+script:
+  - go test -v ./...
