@@ -15,6 +15,8 @@ func HandleSuccessResponse(w http.ResponseWriter, response map[string]interface{
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		_, err = w.Write([]byte(err.Error()))
+	} else {
+		_, err = w.Write(rateJson)
 	}
-	_, err = w.Write(rateJson)
+
 }
