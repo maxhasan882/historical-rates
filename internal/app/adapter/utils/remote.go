@@ -1,6 +1,7 @@
 package utils
 
 import (
+	"crypto/tls"
 	"fmt"
 	"io"
 	"io/ioutil"
@@ -29,7 +30,10 @@ func (a Api) MakeRequest() ([]byte, int, error) {
 			request.Header.Set(item, value)
 		}
 	}
-	client := &http.Client{}
+	tr := &http.Transport{
+		TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
+	}
+	client := &http.Client{Transport: tr}
 	response, err := client.Do(request)
 	if err != nil {
 		return []byte(""), http.StatusInternalServerError, err

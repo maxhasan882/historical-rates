@@ -14,27 +14,20 @@ services:
     restart: always
     ports:
       - "8080:8080"
-    networks:
-      - main
     depends_on:
-      - postgres
+      - database
 
-  postgres:
+  database:
     image: postgres:13.0
     ports:
-      - '${PORT}:5432'
+      - '${POSTGRES_PORT}:5432'
     restart: always
     volumes:
       - pg_data:/var/lib/postgresql/data
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
     environment:
       - POSTGRES_PASSWORD=postgres
       - POSTGRES_DB=historical_rate
-    networks:
-      main:
-        aliases:
-          - postgres
 
 volumes:
   pg_data:
-networks:
-  main:
