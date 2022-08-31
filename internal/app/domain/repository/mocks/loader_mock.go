@@ -6,10 +6,12 @@ import (
 
 type DataLoaderMoc struct {
 	HistoricalRates domain.HistoricalRates
+	Error           error
 }
 
-func (d DataLoaderMoc) Returns(historicalRates domain.HistoricalRates) DataLoaderMoc {
+func (d DataLoaderMoc) Returns(historicalRates domain.HistoricalRates, err error) DataLoaderMoc {
 	d.HistoricalRates = historicalRates
+	d.Error = err
 	return d
 }
 
@@ -19,5 +21,5 @@ func (d DataLoaderMoc) LoadXML() domain.HistoricalRates {
 }
 
 func (d DataLoaderMoc) LoadData(rate domain.Rate) error {
-	return nil
+	return d.Error
 }
