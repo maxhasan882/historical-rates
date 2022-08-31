@@ -2,6 +2,7 @@ package env
 
 import (
 	"bytes"
+	"fmt"
 	"github.com/stretchr/testify/assert"
 	"io"
 	"os"
@@ -49,6 +50,13 @@ func TestSetToEnv(t *testing.T) {
 	assert.Equal(t, err, nil)
 	assert.Equal(t, os.Getenv("DATABASE_NAME"), "test")
 	assert.Equal(t, os.Getenv("NAME"), "test name")
+
+	os.Clearenv()
+	envMap = make(map[string]string)
+	envMap["=="] = "test"
+	err = setToEnv(envMap)
+	fmt.Println(err)
+	assert.NotNil(t, err)
 }
 
 func TestLoad(t *testing.T) {
