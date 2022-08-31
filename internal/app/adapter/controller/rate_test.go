@@ -58,13 +58,18 @@ func TestLatestHistoricalRate(t *testing.T) {
 	}
 	assert.Equal(t, response, actualResult)
 	assert.Equal(t, res.Code, 200)
-
-	m.EXPECT().GetLatest().Return(rates, errors.New("new error"))
+	mInv := mocks.NewMockIHistoricalRate(ctrl)
+	serverInv := Server{
+		DB:             nil,
+		RateRepository: mInv,
+	}
+	server.RateRepository = mInv
+	mInv.EXPECT().GetLatest().Return(rates, errors.New("new error"))
 	req = httptest.NewRequest(http.MethodGet, "/rates/latest", nil)
 	res = httptest.NewRecorder()
-	server.GetLatestHistoricalRate(res, req, nil)
-	assert.NotNil(t, err)
-	assert.Equal(t, err, errors.New("new error"))
+	serverInv.GetLatestHistoricalRate(res, req, nil)
+	assert.Equal(t, res.Body.String(), "new error")
+	assert.Equal(t, res.Code, 400)
 }
 
 func TestHistoricalRateByDate(t *testing.T) {
