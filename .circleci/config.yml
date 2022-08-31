@@ -30,9 +30,7 @@ jobs:
             - "/go/pkg/mod"
       - run:
           name: Run tests
-          command: |
-            mkdir -p /tmp/test-reports
-            gotestsum --junitfile /tmp/test-reports/unit-tests.xml
+          command: go test  ./... -coverprofile cover.out
       - store_test_results:
           path: /tmp/test-reports
       - codecov/upload:
