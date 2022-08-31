@@ -8,14 +8,15 @@ import (
 
 func TestMakeRequestRequestError(t *testing.T) {
 	api := Api{
-		Url:            "error",
+		Url:            "",
 		Params:         "",
 		OptionalParams: "",
-		Method:         "",
+		Method:         "G/G",
 		Body:           nil,
 		Headers:        nil,
 	}
-	_, _, err := api.MakeRequest()
+	_, code, err := api.MakeRequest()
+	assert.Equal(t, code, http.StatusInternalServerError)
 	assert.NotNil(t, err)
 }
 
