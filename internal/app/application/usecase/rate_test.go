@@ -1,6 +1,7 @@
 package usecase
 
 import (
+	"errors"
 	"github.com/golang/mock/gomock"
 	"github.com/historical-rate/internal/app/domain"
 	"github.com/historical-rate/internal/app/domain/repository/mocks"
@@ -9,7 +10,7 @@ import (
 	"time"
 )
 
-func TestMockIHistoricalRate_GetLatestHistoricalRate(t *testing.T) {
+func TestGetLatestHistoricalRate(t *testing.T) {
 	ctrl := gomock.NewController(t)
 
 	defer ctrl.Finish()
@@ -33,7 +34,19 @@ func TestMockIHistoricalRate_GetLatestHistoricalRate(t *testing.T) {
 	assert.Equal(t, err, nil)
 }
 
-func TestRateUseCase_GetHistoricalRateByDate(t *testing.T) {
+func TestGetLatestHistoricalRateError(t *testing.T) {
+	ctrl := gomock.NewController(t)
+
+	defer ctrl.Finish()
+
+	m := mocks.NewMockIHistoricalRate(ctrl)
+
+	m.EXPECT().GetLatest().Return(nil, errors.New("test error"))
+	_, err := RateUseCase{m}.GetLatestHistoricalRate()
+	assert.NotNil(t, err)
+}
+
+func TestGetHistoricalRateByDate(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 	m := mocks.NewMockIHistoricalRate(ctrl)
@@ -57,7 +70,16 @@ func TestRateUseCase_GetHistoricalRateByDate(t *testing.T) {
 	assert.Equal(t, err, nil)
 }
 
-func TestMockIHistoricalRate_GetAnalyze(t *testing.T) {
+func TestGetHistoricalRateByDateError(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+	m := mocks.NewMockIHistoricalRate(ctrl)
+	m.EXPECT().GetByDate("").Return(nil, errors.New("test error"))
+	_, err := RateUseCase{m}.GetHistoricalRateByDate("")
+	assert.NotNil(t, err)
+}
+
+func TestGetAnalyze(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 	m := mocks.NewMockIHistoricalRate(ctrl)
@@ -80,4 +102,13 @@ func TestMockIHistoricalRate_GetAnalyze(t *testing.T) {
 	res, err := RateUseCase{m}.GetHistoricalAnalyzes()
 	assert.Equal(t, res, result)
 	assert.Equal(t, err, nil)
+}
+
+func TestGetAnalyzeError(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+	m := mocks.NewMockIHistoricalRate(ctrl)
+	m.EXPECT().GetAnalyze().Return(nil, errors.New("test error"))
+	_, err := RateUseCase{m}.GetHistoricalAnalyzes()
+	assert.NotNil(t, err)
 }

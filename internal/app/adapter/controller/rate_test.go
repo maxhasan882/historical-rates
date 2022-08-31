@@ -2,6 +2,7 @@ package controller
 
 import (
 	"encoding/json"
+	"errors"
 	"github.com/golang/mock/gomock"
 	"github.com/historical-rate/internal/app/adapter"
 	"github.com/historical-rate/internal/app/domain"
@@ -13,7 +14,7 @@ import (
 	"time"
 )
 
-func TestLatestHistoricalRate(t *testing.T) {
+func TestLatestHistoricalRateSuccessResult(t *testing.T) {
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -50,9 +51,6 @@ func TestLatestHistoricalRate(t *testing.T) {
 	server.GetLatestHistoricalRate(res, req, nil)
 	err := json.Unmarshal([]byte(res.Body.String()), &response)
 	if err != nil {
-		return
-	}
-	if err != nil {
 		t.Error("Parse JSON Data Error")
 	}
 	if want, got := http.StatusOK, res.Result().StatusCode; want != got {
@@ -60,9 +58,38 @@ func TestLatestHistoricalRate(t *testing.T) {
 	}
 	assert.Equal(t, response, actualResult)
 	assert.Equal(t, res.Code, 200)
+	mInv := mocks.NewMockIHistoricalRate(ctrl)
+	serverInv := Server{
+		DB:             nil,
+		RateRepository: mInv,
+	}
+	server.RateRepository = mInv
+	mInv.EXPECT().GetLatest().Return(rates, errors.New("new error"))
+	req = httptest.NewRequest(http.MethodGet, "/rates/latest", nil)
+	res = httptest.NewRecorder()
+	serverInv.GetLatestHistoricalRate(res, req, nil)
+	assert.Equal(t, res.Body.String(), "new error")
+	assert.Equal(t, res.Code, 400)
 }
 
-func TestHistoricalRateByDate(t *testing.T) {
+func TestLatestHistoricalRateErrorResult(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+	m := mocks.NewMockIHistoricalRate(ctrl)
+	server := Server{
+		DB:             nil,
+		RateRepository: m,
+	}
+	server.RateRepository = m
+	m.EXPECT().GetLatest().Return(nil, errors.New("new error"))
+	req := httptest.NewRequest(http.MethodGet, "/rates/latest", nil)
+	res := httptest.NewRecorder()
+	server.GetLatestHistoricalRate(res, req, nil)
+	assert.Equal(t, res.Body.String(), "new error")
+	assert.Equal(t, res.Code, 400)
+}
+
+func TestHistoricalRateByDateSuccessResult(t *testing.T) {
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -93,7 +120,27 @@ func TestHistoricalRateByDate(t *testing.T) {
 	assert.Equal(t, res.Code, 200)
 }
 
-func TestHistoricalAnalyzeReport(t *testing.T) {
+func TestHistoricalRateByDateErrorResult(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+	m := mocks.NewMockIHistoricalRate(ctrl)
+	m.EXPECT().GetByDate("2022-01-01").Return(nil, errors.New("new error"))
+	server := Server{
+		DB:             nil,
+		RateRepository: m,
+	}
+	server.RateRepository = m
+	req := httptest.NewRequest(http.MethodGet, "/rates/2022-01-01", nil)
+	res := httptest.NewRecorder()
+	server.GetHistoricalRateByDate(res, req, []adapter.Param{{
+		Key:   "date",
+		Value: "2022-01-01",
+	}})
+	assert.Equal(t, res.Body.String(), "new error")
+	assert.Equal(t, res.Code, 400)
+}
+
+func TestHistoricalAnalyzeReportSuccessResult(t *testing.T) {
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -121,4 +168,21 @@ func TestHistoricalAnalyzeReport(t *testing.T) {
 	}
 
 	assert.Equal(t, res.Code, 200)
+}
+
+func TestHistoricalAnalyzeReportErrorResult(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+	m := mocks.NewMockIHistoricalRate(ctrl)
+	m.EXPECT().GetAnalyze().Return(nil, errors.New("new error"))
+	server := Server{
+		DB:             nil,
+		RateRepository: m,
+	}
+	server.RateRepository = m
+	req := httptest.NewRequest(http.MethodGet, "/rates/2022-01-01", nil)
+	res := httptest.NewRecorder()
+	server.GetHistoricalAnalyzeReport(res, req, nil)
+	assert.Equal(t, res.Body.String(), "new error")
+	assert.Equal(t, res.Code, 400)
 }

@@ -2,6 +2,8 @@ package env
 
 import (
 	"bytes"
+	"errors"
+	"fmt"
 	"github.com/stretchr/testify/assert"
 	"io"
 	"os"
@@ -9,16 +11,18 @@ import (
 )
 
 type LoaderMoc struct {
+	Data  string
+	Error error
 }
 
-func NewLoadMoc() ILoader {
-	return &LoaderMoc{}
+func NewLoadMoc(data string, err error) ILoader {
+	return &LoaderMoc{Data: data, Error: err}
 }
 
 func (l *LoaderMoc) LoadFile(fileName string) (io.Reader, error) {
 	var buffer bytes.Buffer
-	buffer.WriteString("DATABASE_NAME=test\nDATABASE_PORT=9876\n")
-	return &buffer, nil
+	buffer.WriteString(l.Data)
+	return &buffer, l.Error
 }
 
 func TestFileNameOrDefault(t *testing.T) {
@@ -49,12 +53,28 @@ func TestSetToEnv(t *testing.T) {
 	assert.Equal(t, err, nil)
 	assert.Equal(t, os.Getenv("DATABASE_NAME"), "test")
 	assert.Equal(t, os.Getenv("NAME"), "test name")
+
+	os.Clearenv()
+	envMap = make(map[string]string)
+	envMap["=="] = "test"
+	err = setToEnv(envMap)
+	fmt.Println(err)
+	assert.NotNil(t, err)
 }
 
 func TestLoad(t *testing.T) {
 	os.Clearenv()
-	err := LoadFile{LoadRepo: NewLoadMoc()}.Load("")
+	err := LoadFile{LoadRepo: NewLoadMoc("DATABASE_NAME=test\nDATABASE_PORT=9876\n", nil)}.Load("")
 	assert.Equal(t, os.Getenv("DATABASE_NAME"), "test")
 	assert.Equal(t, os.Getenv("DATABASE_PORT"), "9876")
 	assert.Equal(t, err, nil)
+
+	os.Clearenv()
+	err = LoadFile{LoadRepo: NewLoadMoc(`==test\n`, nil)}.Load("")
+	assert.NotNil(t, err)
+}
+
+func TestLoadError(t *testing.T) {
+	err := LoadFile{LoadRepo: NewLoadMoc("", errors.New("test error"))}.Load("")
+	assert.NotNil(t, err)
 }

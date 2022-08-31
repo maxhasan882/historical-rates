@@ -3,6 +3,7 @@ package adapter
 import (
 	"github.com/stretchr/testify/assert"
 	"net/http"
+	"net/http/httptest"
 	"reflect"
 	"testing"
 )
@@ -63,4 +64,22 @@ func TestPost(t *testing.T) {
 	handle, param := route.FindHandler("POST", requestPath)
 	assert.Equal(t, reflect.ValueOf(node.handle), reflect.ValueOf(handle))
 	assert.Equal(t, param.ByName("id"), "1")
+}
+
+func TestServeHttpBadRequest(t *testing.T) {
+	r, _ := http.NewRequest(http.MethodPost, "/foo", nil)
+	w := httptest.NewRecorder()
+	route := New()
+	route.ServeHTTP(w, r)
+	assert.Equal(t, w.Code, http.StatusBadRequest)
+}
+
+func TestServeHttpSuccess(t *testing.T) {
+	handlerFunc := func(_ http.ResponseWriter, req *http.Request, params Params) {}
+	r, _ := http.NewRequest(http.MethodPost, "/rates/latest", nil)
+	w := httptest.NewRecorder()
+	router := New()
+	router.Handle("POST", "/rates/latest", handlerFunc)
+	router.ServeHTTP(w, r)
+	assert.Equal(t, w.Code, http.StatusOK)
 }

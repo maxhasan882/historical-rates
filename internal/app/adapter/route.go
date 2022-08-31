@@ -47,13 +47,10 @@ func (r *Router) ServeHTTP(writer http.ResponseWriter, request *http.Request) {
 	handler, params := r.FindHandler(request.Method, request.URL.Path)
 	if handler == nil {
 		writer.WriteHeader(http.StatusBadRequest)
-		_, err := fmt.Fprintf(writer, "not found")
-		if err != nil {
-			return
-		}
-		return
+		fmt.Fprintf(writer, "not found")
+	} else {
+		handler(writer, request, params)
 	}
-	handler(writer, request, params)
 }
 
 func (r *Router) FindHandler(method, path string) (Handle, Params) {
@@ -61,8 +58,10 @@ func (r *Router) FindHandler(method, path string) (Handle, Params) {
 		handler Handle
 		params  Params
 	)
-	root := r.trees[method]
-
+	root, ok := r.trees[method]
+	if !ok {
+		return nil, nil
+	}
 	splitPath := strings.Split(path, "/")
 
 	pathLength := len(splitPath)

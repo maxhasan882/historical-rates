@@ -17,7 +17,7 @@ func TestHandleBadRequest(t *testing.T) {
 	assert.Equal(t, res.Code, http.StatusBadRequest)
 }
 
-func TestHandleSuccessResponse(t *testing.T) {
+func TestHandleSuccessResponseValidData(t *testing.T) {
 	res := httptest.NewRecorder()
 	body := make(map[string]interface{})
 	body["message"] = "test message"
@@ -29,4 +29,12 @@ func TestHandleSuccessResponse(t *testing.T) {
 	}
 	assert.Equal(t, body, response)
 	assert.Equal(t, res.Code, http.StatusOK)
+}
+
+func TestHandleSuccessResponseInValidData(t *testing.T) {
+	res := httptest.NewRecorder()
+	ss := make(map[string]interface{})
+	ss["hello"] = make(chan int)
+	HandleSuccessResponse(res, ss)
+	assert.Equal(t, res.Code, http.StatusBadRequest)
 }
