@@ -11,7 +11,7 @@ import (
 )
 
 func init() {
-	err := env.Load(".env")
+	err := env.LoadFile{LoadRepo: env.NewLoader()}.Load(".env")
 	if err != nil {
 		log.Println(err)
 	}
