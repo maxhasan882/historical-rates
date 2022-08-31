@@ -2,6 +2,7 @@ package controller
 
 import (
 	"encoding/json"
+	"errors"
 	"github.com/golang/mock/gomock"
 	"github.com/historical-rate/internal/app/adapter"
 	"github.com/historical-rate/internal/app/domain"
@@ -50,9 +51,6 @@ func TestLatestHistoricalRate(t *testing.T) {
 	server.GetLatestHistoricalRate(res, req, nil)
 	err := json.Unmarshal([]byte(res.Body.String()), &response)
 	if err != nil {
-		return
-	}
-	if err != nil {
 		t.Error("Parse JSON Data Error")
 	}
 	if want, got := http.StatusOK, res.Result().StatusCode; want != got {
@@ -60,6 +58,13 @@ func TestLatestHistoricalRate(t *testing.T) {
 	}
 	assert.Equal(t, response, actualResult)
 	assert.Equal(t, res.Code, 200)
+
+	m.EXPECT().GetLatest().Return(rates, errors.New("new error"))
+	req = httptest.NewRequest(http.MethodGet, "/rates/latest", nil)
+	res = httptest.NewRecorder()
+	server.GetLatestHistoricalRate(res, req, nil)
+	assert.NotNil(t, err)
+	assert.Equal(t, err, errors.New("new error"))
 }
 
 func TestHistoricalRateByDate(t *testing.T) {
