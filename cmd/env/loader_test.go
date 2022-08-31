@@ -10,15 +10,16 @@ import (
 )
 
 type LoaderMoc struct {
+	Data string
 }
 
-func NewLoadMoc() ILoader {
-	return &LoaderMoc{}
+func NewLoadMoc(data string) ILoader {
+	return &LoaderMoc{Data: data}
 }
 
 func (l *LoaderMoc) LoadFile(fileName string) (io.Reader, error) {
 	var buffer bytes.Buffer
-	buffer.WriteString("DATABASE_NAME=test\nDATABASE_PORT=9876\n")
+	buffer.WriteString(l.Data)
 	return &buffer, nil
 }
 
@@ -61,8 +62,12 @@ func TestSetToEnv(t *testing.T) {
 
 func TestLoad(t *testing.T) {
 	os.Clearenv()
-	err := LoadFile{LoadRepo: NewLoadMoc()}.Load("")
+	err := LoadFile{LoadRepo: NewLoadMoc("DATABASE_NAME=test\nDATABASE_PORT=9876\n")}.Load("")
 	assert.Equal(t, os.Getenv("DATABASE_NAME"), "test")
 	assert.Equal(t, os.Getenv("DATABASE_PORT"), "9876")
 	assert.Equal(t, err, nil)
+
+	os.Clearenv()
+	err = LoadFile{LoadRepo: NewLoadMoc(`==test\n`)}.Load("")
+	assert.NotNil(t, err)
 }
