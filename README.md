@@ -25,29 +25,29 @@ Using docker
 🔔 `Note`If you interested to run it from locally without Docker please ensure postgres database is up running also env is properly configured. Then create database table using **/build/init.sql** file.
 - >go run /cmd/app/main.go
 >Example .env file
->>_COMPOSE_FILE=build/docker-compose.yml
-POSTGRES_USER=postgres
-POSTGRES_PASSWORD=postgres
-POSTGRES_HOST=database
-POSTGRES_PORT=5432
-DATABASE_NAME=historical_rate
+>>_COMPOSE_FILE=build/docker-compose.yml  
+POSTGRES_USER=postgres  
+POSTGRES_PASSWORD=postgres  
+POSTGRES_HOST=database  
+POSTGRES_PORT=5432  
+DATABASE_NAME=historical_rate  
 SERVER_PORT=8080_
 
 ### ✍️ Task 1: Populate data
 > It will automatically populate data at startup time.
 
 ### ✍️ Task 2, 3 and 4: Lets visit following endpoints
-> i.   GET: localhost:port/rates/latest </br>
-> ii.  GET: localhost:port/rates/YYYY-MM-DD </br>
+> i.   GET: localhost:port/rates/latest   
+> ii.  GET: localhost:port/rates/YYYY-MM-DD   
 > iii. GET: localhost:port/rates/analyze
 
 ### ✍️ Bonus
-> Use only the standard library. It is OK if a library is needed for TDD or database connection. <br>
+> Use only the standard library. It is OK if a library is needed for TDD or database connection.   
 >>No library other than the standard library was used.
 I have used the following 3 external libraries for DB connection and testing.
-> >>github.com/golang/mock v1.6.0 (for mocking) <br>
-github.com/lib/pq v1.10.6 (for db connection) <br>
-github.com/stretchr/testify v1.8.0 (for testin)
+> >>github.com/golang/mock v1.6.0 (for mocking)   
+github.com/lib/pq v1.10.6 (for db connection)   
+github.com/stretchr/testify v1.8.0 (for testing)
 # 📋 Folder Structure
 ```
 historical-rates
@@ -57,43 +57,43 @@ historical-rates
     │   ├── Dockerfile
     ├── cmd
     │   ├── app
-    │   │   └── main.go
-    │   └── env
+    │   │   └── main.go                        # application entry point
+    │   └── env                                # custom env loader
     │       ├── loader.go
     │       └── loader_test.go
-    ├── internal
+    ├── internal                               # main source directory
     │   └── app
-    │       ├── adapter
+    │       ├── adapter                        # outer layer. all framework, external database and middlewares related code 
     │       │   ├── controller
     │       │   │   ├── rate.go
     │       │   │   ├── rate_test.go
-    │       │   │   ├── response_handler.go
+    │       │   │   ├── response_handler.go    # common respponse handler
     │       │   │   ├── response_handler_test.go
     │       │   │   └── server.go
     │       │   ├── db
     │       │   │   └── connections
-    │       │   │       └── pg_connection.go
-    │       │   ├── repository
+    │       │   │       └── pg_connection.go   # postgres db connection
+    │       │   ├── repository                 # repository implementation
     │       │   │   ├── loader.go
     │       │   │   └── rate.go
-    │       │   ├── route.go
+    │       │   ├── route.go                  # custom route parser
     │       │   ├── route_test.go
-    │       │   └── utils
+    │       │   └── utils                     # utils functions
     │       │       ├── common.go
     │       │       ├── common_test.go
     │       │       ├── remote.go
     │       │       └── remote_test.go
-    │       ├── application
+    │       ├── application                   # middle layer. mainly deals with business logic
     │       │   └── usecase
     │       │       ├── loader.go
     │       │       ├── loader_test.go
     │       │       ├── rate.go
     │       │       └── rate_test.go
-    │       └── domain
+    │       └── domain                       # inner layer. all schema and repository defination
     │           ├── rate.go
     │           └── repository
     │               ├── loader.go
-    │               ├── mocks
+    │               ├── mocks                # interface moc for testing
     │               │   ├── loader_mock.go
     │               │   └── rate_mock.go
     │               └── rate.go
