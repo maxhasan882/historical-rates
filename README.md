@@ -50,29 +50,60 @@ github.com/lib/pq v1.10.6 (for db connection) <br>
 github.com/stretchr/testify v1.8.0 (for testin)
 # 📋 Folder Structure
 ```
-book-info-graphql
-├── build
-│    ├── Dockerfile
-│    ├── init.sql
-├── cmd
-│    ├── app
-│    │    ├── config
-│    │    │  └── loader.go
-│    │    └── main.go
-├── graph
-│    ├── ***                  - All graph related code along with auto generated code
-├── internal
-│    └── app
-│         ├── adapter         - Outer layer. All framework and external database and middlewares related code 
-│         ├── application     - Middle layer. Usecase or buniness logic relaed code
-│         │    └── usecase
-│         └── domain          - Inner layer. Domain, interface and factory related code
-│              ├── interface
-│              └── factory
-└── .env
+historical-rates
+    ├── build
+    │   ├── init.sql
+    │   ├── docker-compose.yml
+    │   ├── Dockerfile
+    ├── cmd
+    │   ├── app
+    │   │   └── main.go
+    │   └── env
+    │       ├── loader.go
+    │       └── loader_test.go
+    ├── internal
+    │   └── app
+    │       ├── adapter
+    │       │   ├── controller
+    │       │   │   ├── rate.go
+    │       │   │   ├── rate_test.go
+    │       │   │   ├── response_handler.go
+    │       │   │   ├── response_handler_test.go
+    │       │   │   └── server.go
+    │       │   ├── db
+    │       │   │   └── connections
+    │       │   │       └── pg_connection.go
+    │       │   ├── repository
+    │       │   │   ├── loader.go
+    │       │   │   └── rate.go
+    │       │   ├── route.go
+    │       │   ├── route_test.go
+    │       │   └── utils
+    │       │       ├── common.go
+    │       │       ├── common_test.go
+    │       │       ├── remote.go
+    │       │       └── remote_test.go
+    │       ├── application
+    │       │   └── usecase
+    │       │       ├── loader.go
+    │       │       ├── loader_test.go
+    │       │       ├── rate.go
+    │       │       └── rate_test.go
+    │       └── domain
+    │           ├── rate.go
+    │           └── repository
+    │               ├── loader.go
+    │               ├── mocks
+    │               │   ├── loader_mock.go
+    │               │   └── rate_mock.go
+    │               └── rate.go
+    ├── go.mod
+    ├── go.sum
+    ├── README.md
+    └── .env
 ```
 # ❓ Challenges and Solution
 * Custom route management
-  * 
+  * As I'm not using any library other than standard library, so routing management was a bit challenging. That's why I have decided to write a custom simple route parser which can solve the purpose of the task. For parsing route I have followed tree mechanism. 
 * Load .env 
-  * 
+  * There is no inbuilt .env file loader in golang so, I have written a custom .env loader for reading variables from a file and set it to environment.
