@@ -20,7 +20,7 @@ services:
   database:
     image: postgres:13.0
     ports:
-      - '${POSTGRES_PORT}:5432'
+      - '${POSTGRES_PORT}:${POSTGRES_PORT}'
     restart: always
     volumes:
       - pg_data:/var/lib/postgresql/data
@@ -28,6 +28,7 @@ services:
     environment:
       - POSTGRES_PASSWORD=postgres
       - POSTGRES_DB=historical_rate
+    command: -p ${POSTGRES_PORT}
 
 volumes:
   pg_data:
