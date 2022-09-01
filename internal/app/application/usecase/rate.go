@@ -9,6 +9,7 @@ type RateUseCase struct {
 	RateRepository repository.IHistoricalRate
 }
 
+// GetLatestHistoricalRate returns all the key value of rate and currency for the latest date
 func (r RateUseCase) GetLatestHistoricalRate() (map[string]float64, error) {
 	rates, err := r.RateRepository.GetLatest()
 	if err != nil {
@@ -21,6 +22,7 @@ func (r RateUseCase) GetLatestHistoricalRate() (map[string]float64, error) {
 	return result, nil
 }
 
+// GetHistoricalRateByDate returns all the key value of rate and currency for a given date
 func (r RateUseCase) GetHistoricalRateByDate(date string) (map[string]float64, error) {
 	rates, err := r.RateRepository.GetByDate(date)
 	if err != nil {
@@ -33,6 +35,7 @@ func (r RateUseCase) GetHistoricalRateByDate(date string) (map[string]float64, e
 	return result, nil
 }
 
+// GetHistoricalAnalyzes returns min, max and avg value for every currency
 func (r RateUseCase) GetHistoricalAnalyzes() (map[string]domain.AnalyzeReportResponse, error) {
 	rates, err := r.RateRepository.GetAnalyze()
 	if err != nil {

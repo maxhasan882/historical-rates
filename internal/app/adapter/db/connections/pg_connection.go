@@ -7,6 +7,7 @@ import (
 	"os"
 )
 
+// Connect returns a postgres db connection
 func Connect() *sql.DB {
 	psqlInfo := fmt.Sprintf(`postgres://%s:%s@%s:%s/%s?sslmode=disable`,
 		os.Getenv("POSTGRES_USER"), os.Getenv("POSTGRES_PASSWORD"),

@@ -12,6 +12,7 @@ type LoaderUseCase struct {
 	LoadRepository repository.IDataLoader
 }
 
+// LoadData prepare historical data and send it to LoadData repository for saving
 func (l LoaderUseCase) LoadData() error {
 	data := l.LoadRepository.LoadXML()
 	for _, data := range data.Cube.Cube {
@@ -25,7 +26,7 @@ func (l LoaderUseCase) LoadData() error {
 				Currency: rt.Currency,
 				Rate:     rt.Rate,
 			}
-			err = l.LoadRepository.LoadData(row)
+			err = l.LoadRepository.LoadData(row) // for saving every row
 			if err != nil {
 				return err
 			}

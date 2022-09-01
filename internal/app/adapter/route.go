@@ -12,6 +12,8 @@ import (
 
 type Handle func(http.ResponseWriter, *http.Request, Params)
 
+// Router is a http.Handler which can be used to dispatch requests to different
+// handler functions via configurable routes
 type Router struct {
 	trees                  map[string]*node
 	paramsPool             sync.Pool
@@ -28,6 +30,7 @@ type Router struct {
 	PanicHandler           func(http.ResponseWriter, *http.Request, interface{})
 }
 
+// Param is a single URL parameter, consisting of a key and a value.
 type Param struct {
 	Key   string
 	Value string
@@ -35,6 +38,7 @@ type Param struct {
 
 type Params []Param
 
+// node is a representation of the route path
 type node struct {
 	path            string
 	hasAnyWildChild bool
@@ -43,6 +47,7 @@ type node struct {
 	handle          Handle
 }
 
+// ServeHTTP route every request to it's handler
 func (r *Router) ServeHTTP(writer http.ResponseWriter, request *http.Request) {
 	handler, params := r.FindHandler(request.Method, request.URL.Path)
 	if handler == nil {
@@ -53,6 +58,7 @@ func (r *Router) ServeHTTP(writer http.ResponseWriter, request *http.Request) {
 	}
 }
 
+// FindHandler finds the handler by using path
 func (r *Router) FindHandler(method, path string) (Handle, Params) {
 	var (
 		handler Handle
@@ -99,6 +105,7 @@ func (r *Router) FindHandler(method, path string) (Handle, Params) {
 	return handler, params
 }
 
+// Handle stores every path in a tree to resolve handler
 func (r *Router) Handle(method, path string, handle Handle) {
 	if r.trees == nil {
 		r.trees = make(map[string]*node)
@@ -142,11 +149,13 @@ func GetFunctionName(temp interface{}) string {
 	return strings.Split(str[len(str)-1], "-")[0]
 }
 
+// GET is a shortcut for router.Handle(http.MethodGet, path, handle)
 func (r *Router) GET(path string, handle Handle) {
 	log.Println(http.MethodGet, "   ", path, "  ", GetFunctionName(handle))
 	r.Handle(http.MethodGet, path, handle)
 }
 
+// POST is a shortcut for router.Handle(http.MethodPost, path, handle)
 func (r *Router) POST(path string, handle Handle) {
 	log.Println(http.MethodPost, "  ", path, "  ", GetFunctionName(handle))
 	r.Handle(http.MethodPost, path, handle)
@@ -163,6 +172,8 @@ func New() *Router {
 	}
 }
 
+// ByName returns the value of the first Param which key matches the given name.
+// If no matching Param is found, an empty string is returned.
 func (ps Params) ByName(name string) string {
 	for _, p := range ps {
 		if p.Key == name {

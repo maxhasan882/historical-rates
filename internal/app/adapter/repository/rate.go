@@ -17,6 +17,7 @@ func NewHistoricalRate(db *sql.DB) repository.IHistoricalRate {
 	return &HistoricalRate{DB: db}
 }
 
+// GetLatest get data for the latest date and returns
 func (h HistoricalRate) GetLatest() ([]domain.Rate, error) {
 	var rates []domain.Rate
 	query := `SELECT id, date, currency, rate 
@@ -37,6 +38,7 @@ func (h HistoricalRate) GetLatest() ([]domain.Rate, error) {
 	return rates, nil
 }
 
+// GetByDate historical rates for a given date
 func (h HistoricalRate) GetByDate(date string) ([]domain.Rate, error) {
 	var rates []domain.Rate
 	query := fmt.Sprintf(`SELECT id, date, currency, rate 
@@ -58,6 +60,7 @@ func (h HistoricalRate) GetByDate(date string) ([]domain.Rate, error) {
 	return rates, nil
 }
 
+// GetAnalyze calculates and returns analyze data
 func (h HistoricalRate) GetAnalyze() ([]domain.AnalyzeReport, error) {
 	var analyzes []domain.AnalyzeReport
 	query := `SELECT currency, MIN(rate), MAX(rate), AVG(rate) 

@@ -17,6 +17,7 @@ func init() {
 	}
 }
 
+// load is responsible for loading data at startup time
 func load(server *controller.Server) {
 	err := usecase.LoaderUseCase{LoadRepository: server.LoaderRepository}.LoadData()
 	if err != nil {

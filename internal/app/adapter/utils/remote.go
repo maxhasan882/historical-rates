@@ -10,6 +10,7 @@ import (
 
 type Header map[string]string
 
+// Api request attribute schema
 type Api struct {
 	Url            string
 	Params         string
@@ -19,6 +20,7 @@ type Api struct {
 	Headers        []Header
 }
 
+// MakeRequest request to external source and returns payload data, response status and error if any.
 func (a Api) MakeRequest() ([]byte, int, error) {
 	url := fmt.Sprintf("%v%v%v", a.Url, a.Params, a.OptionalParams)
 	request, err := http.NewRequest(a.Method, url, a.Body)
@@ -31,7 +33,7 @@ func (a Api) MakeRequest() ([]byte, int, error) {
 		}
 	}
 	tr := &http.Transport{
-		TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
+		TLSClientConfig: &tls.Config{InsecureSkipVerify: true}, // for overlooking certificate signed by unknown authority x509 issue
 	}
 	client := &http.Client{Transport: tr}
 	response, err := client.Do(request)

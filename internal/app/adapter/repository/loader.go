@@ -20,6 +20,7 @@ func NewDataLoader(db *sql.DB) repository.IDataLoader {
 	return &DataLoader{DB: db}
 }
 
+// LoadXML returns historical rate from www.ecb.europa.eu.
 func (d DataLoader) LoadXML() domain.HistoricalRates {
 	api := utils.Api{
 		Url:    ExternalDataSourceUrl,
@@ -37,8 +38,9 @@ func (d DataLoader) LoadXML() domain.HistoricalRates {
 	return data
 }
 
+// LoadData save every row of historical rate
 func (d DataLoader) LoadData(rate domain.Rate) error {
-	_sql := fmt.Sprintf("INSERT INTO historical_data (date, currency, rate) VALUES ('%s', '%s', '%f'); ", rate.Date.Format(DateTimeLayout), rate.Currency, rate.Rate)
+	_sql := fmt.Sprintf(`INSERT INTO historical_data (date, currency, rate) VALUES ('%s', '%s', '%f');`, rate.Date.Format(DateTimeLayout), rate.Currency, rate.Rate)
 	row, err := d.DB.Query(_sql)
 	if err != nil {
 		return err
