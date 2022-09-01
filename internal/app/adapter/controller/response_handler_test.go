@@ -31,7 +31,7 @@ func TestHandleSuccessResponseValidData(t *testing.T) {
 	assert.Equal(t, res.Code, http.StatusOK)
 }
 
-func TestHandleSuccessResponseInValidData(t *testing.T) {
+func TestHandleSuccessResponseInvalidData(t *testing.T) {
 	res := httptest.NewRecorder()
 	ss := make(map[string]interface{})
 	ss["hello"] = make(chan int)

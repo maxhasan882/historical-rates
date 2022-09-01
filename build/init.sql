@@ -4,5 +4,5 @@ create table if not exists historical_data
     currency char(50) not null ,
     rate     double precision,
     date     timestamp with time zone default CURRENT_DATE not null,
-                           unique (currency, date)
+    unique (currency, date)
 );

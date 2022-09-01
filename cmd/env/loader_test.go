@@ -77,7 +77,7 @@ func TestLoadForInvalidData(t *testing.T) {
 	assert.NotNil(t, err)
 }
 
-func TestLoadError(t *testing.T) {
+func TestLoadWithError(t *testing.T) {
 	err := LoadFile{LoadRepo: NewLoadMoc("", errors.New("test error"))}.Load("")
 	assert.NotNil(t, err)
 }

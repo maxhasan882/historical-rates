@@ -1,7 +1,6 @@
 FROM golang:alpine as build-env
 
-RUN apk update && apk upgrade && \
-    apk add --no-cache bash git openssh
+RUN apk update && apk upgrade && apk add --no-cache bash git openssh
 RUN mkdir /historical_rates
 WORKDIR /historical_rates/
 ENV HOME .

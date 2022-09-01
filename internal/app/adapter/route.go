@@ -105,7 +105,7 @@ func (r *Router) FindHandler(method, path string) (Handle, Params) {
 	return handler, params
 }
 
-// Handle stores every path in a tree to resolve handler
+// Handle generate a tree from route path to resolve handler
 func (r *Router) Handle(method, path string, handle Handle) {
 	if r.trees == nil {
 		r.trees = make(map[string]*node)

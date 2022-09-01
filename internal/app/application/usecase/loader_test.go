@@ -42,7 +42,7 @@ func TestLoadDataWithValidData(t *testing.T) {
 	assert.Equal(t, err, nil)
 }
 
-func TestLoadDataWithUnValidData(t *testing.T) {
+func TestLoadDataWithInvalidData(t *testing.T) {
 	cubes := []domain.Cube{{
 		Time: "20-01-02",
 		Cube: []struct {
@@ -76,7 +76,7 @@ func TestLoadDataWithUnValidData(t *testing.T) {
 	assert.NotNil(t, err)
 }
 
-func TestLoadDataForRepoError(t *testing.T) {
+func TestLoadDataWithRepoError(t *testing.T) {
 	cubes := []domain.Cube{{
 		Time: "2020-01-02",
 		Cube: []struct {
