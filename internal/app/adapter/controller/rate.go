@@ -3,6 +3,7 @@ package controller
 import (
 	"github.com/historical-rate/internal/app/adapter"
 	"github.com/historical-rate/internal/app/application/usecase"
+	"log"
 	"net/http"
 )
 
@@ -12,6 +13,7 @@ func (s *Server) GetLatestHistoricalRate(w http.ResponseWriter, req *http.Reques
 	rate, err := rateUseCase.GetLatestHistoricalRate()
 	if err != nil {
 		HandleBadRequest(w, err)
+		log.Println(err)
 		return
 	}
 	response := make(map[string]interface{})
@@ -27,6 +29,7 @@ func (s *Server) GetHistoricalRateByDate(w http.ResponseWriter, req *http.Reques
 	rate, err := rateUseCase.GetHistoricalRateByDate(date)
 	if err != nil {
 		HandleBadRequest(w, err)
+		log.Println(err)
 		return
 	}
 	response := make(map[string]interface{})
@@ -41,6 +44,7 @@ func (s *Server) GetHistoricalAnalyzeReport(w http.ResponseWriter, req *http.Req
 	rate, err := rateUseCase.GetHistoricalAnalyzes()
 	if err != nil {
 		HandleBadRequest(w, err)
+		log.Println(err)
 		return
 	}
 	response := make(map[string]interface{})

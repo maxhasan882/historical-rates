@@ -3,7 +3,6 @@ package env
 import (
 	"bytes"
 	"errors"
-	"fmt"
 	"github.com/stretchr/testify/assert"
 	"io"
 	"os"
@@ -25,7 +24,7 @@ func (l *LoaderMoc) LoadFile(fileName string) (io.Reader, error) {
 	return &buffer, l.Error
 }
 
-func TestFileNameOrDefault(t *testing.T) {
+func TestGetFileNameOrDefault(t *testing.T) {
 	assert.Equal(t, fileNameOrDefault(""), ".env")
 	assert.Equal(t, fileNameOrDefault(".env"), ".env")
 	assert.Equal(t, fileNameOrDefault("./../.env"), "./../.env")
@@ -44,7 +43,7 @@ func TestGetEnvMap(t *testing.T) {
 	assert.Equal(t, content, expected)
 }
 
-func TestSetToEnv(t *testing.T) {
+func TestSetToEnvForValidData(t *testing.T) {
 	os.Clearenv()
 	envMap := make(map[string]string)
 	envMap["DATABASE_NAME"] = "test"
@@ -53,24 +52,28 @@ func TestSetToEnv(t *testing.T) {
 	assert.Equal(t, err, nil)
 	assert.Equal(t, os.Getenv("DATABASE_NAME"), "test")
 	assert.Equal(t, os.Getenv("NAME"), "test name")
+}
 
+func TestSetToEnvForInvalidData(t *testing.T) {
 	os.Clearenv()
+	envMap := make(map[string]string)
 	envMap = make(map[string]string)
 	envMap["=="] = "test"
-	err = setToEnv(envMap)
-	fmt.Println(err)
+	err := setToEnv(envMap)
 	assert.NotNil(t, err)
 }
 
-func TestLoad(t *testing.T) {
+func TestLoadForValidData(t *testing.T) {
 	os.Clearenv()
 	err := LoadFile{LoadRepo: NewLoadMoc("DATABASE_NAME=test\nDATABASE_PORT=9876\n", nil)}.Load("")
 	assert.Equal(t, os.Getenv("DATABASE_NAME"), "test")
 	assert.Equal(t, os.Getenv("DATABASE_PORT"), "9876")
 	assert.Equal(t, err, nil)
+}
 
+func TestLoadForInvalidData(t *testing.T) {
 	os.Clearenv()
-	err = LoadFile{LoadRepo: NewLoadMoc(`==test\n`, nil)}.Load("")
+	err := LoadFile{LoadRepo: NewLoadMoc(`==test\n`, nil)}.Load("")
 	assert.NotNil(t, err)
 }
 
