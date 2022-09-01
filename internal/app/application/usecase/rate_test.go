@@ -90,9 +90,9 @@ func TestGetAnalyze(t *testing.T) {
 		Max:      3,
 		Avg:      2,
 	})
-	result := make(map[string]domain.AnalyzeReportResponse)
+	result := make(map[string]domain.AnalyzeReport)
 	for _, value := range analyzes {
-		result[value.Currency] = domain.AnalyzeReportResponse{
+		result[value.Currency] = domain.AnalyzeReport{
 			Min: value.Min,
 			Max: value.Max,
 			Avg: value.Avg,

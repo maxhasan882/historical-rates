@@ -22,7 +22,7 @@ func (h HistoricalRate) GetLatest() ([]domain.Rate, error) {
 	var rates []domain.Rate
 	query := `SELECT id, date, currency, rate 
 				FROM historical_data his
-				WHERE date = (SELECT max(date) from historical_data WHERE id = his.id)`
+				WHERE date = (SELECT max(date) from historical_data WHERE id = his.id);`
 	data, err := h.DB.Query(query)
 	if err != nil {
 		return nil, err
@@ -43,7 +43,7 @@ func (h HistoricalRate) GetByDate(date string) ([]domain.Rate, error) {
 	var rates []domain.Rate
 	query := fmt.Sprintf(`SELECT id, date, currency, rate 
 				FROM historical_data
-				WHERE date BETWEEN '%s 00:00:00'::timestamp and '%s 23:59:59'::timestamp
+				WHERE date BETWEEN '%s 00:00:00'::timestamp and '%s 23:59:59'::timestamp;
 				`, date, date)
 	data, err := h.DB.Query(query)
 	if err != nil {
@@ -64,14 +64,14 @@ func (h HistoricalRate) GetByDate(date string) ([]domain.Rate, error) {
 func (h HistoricalRate) GetAnalyze() ([]domain.AnalyzeReport, error) {
 	var analyzes []domain.AnalyzeReport
 	query := `SELECT currency, MIN(rate), MAX(rate), AVG(rate) 
-				FROM historical_data GROUP BY currency order by currency;`
+				FROM historical_data GROUP BY currency;`
 	data, err := h.DB.Query(query)
 	if err != nil {
 		return nil, err
 	}
 	for data.Next() {
 		var analyze domain.AnalyzeReport
-		err = data.Scan(&analyze.Currency, &analyze.Max, &analyze.Min, &analyze.Avg)
+		err = data.Scan(&analyze.Currency, &analyze.Min, &analyze.Max, &analyze.Avg)
 		if err != nil {
 			return nil, err
 		}

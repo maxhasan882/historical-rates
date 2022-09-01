@@ -36,14 +36,6 @@ type Rate struct {
 
 // AnalyzeReport is used for represent a currency report
 type AnalyzeReport struct {
-	Currency string  `json:"currency"`
-	Min      float32 `json:"min"`
-	Max      float32 `json:"max"`
-	Avg      float32 `json:"avg"`
-}
-
-// AnalyzeReportResponse is used for represent the response object of currency report
-type AnalyzeReportResponse struct {
 	Currency string  `json:"currency,omitempty"`
 	Min      float32 `json:"min"`
 	Max      float32 `json:"max"`

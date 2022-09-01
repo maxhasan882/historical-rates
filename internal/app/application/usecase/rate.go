@@ -36,14 +36,14 @@ func (r RateUseCase) GetHistoricalRateByDate(date string) (map[string]float64, e
 }
 
 // GetHistoricalAnalyzes returns min, max and avg value for every currency
-func (r RateUseCase) GetHistoricalAnalyzes() (map[string]domain.AnalyzeReportResponse, error) {
+func (r RateUseCase) GetHistoricalAnalyzes() (map[string]domain.AnalyzeReport, error) {
 	rates, err := r.RateRepository.GetAnalyze()
 	if err != nil {
 		return nil, err
 	}
-	result := make(map[string]domain.AnalyzeReportResponse)
+	result := make(map[string]domain.AnalyzeReport)
 	for _, value := range rates {
-		result[value.Currency] = domain.AnalyzeReportResponse{
+		result[value.Currency] = domain.AnalyzeReport{
 			Min: value.Min,
 			Max: value.Max,
 			Avg: value.Avg,
